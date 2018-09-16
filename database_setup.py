@@ -27,3 +27,6 @@ class MenuItem(Base):
 
 engine = create_engine('sqlite:///restaurantmenu.db')
 Base.metadata.create_all(engine)
+
+DBSession = sessionmaker(bind = engine)
+session = DBSession()
