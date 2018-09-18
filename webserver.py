@@ -47,14 +47,35 @@ class webServerHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
                 output = ""
-                output += "<html><body>"
-                output += "<h1>Restaurant Names</h1>"
-                output += '''<div class="container-fluid text-center">'''
+                output += '''<!DOCTYPE html><html lang="en"><head>
+                <title>Bootstrap Example</title>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+                </head>'''
+                output += "<body>"
+                output += '''<h1 align="center">Restaurant Details</h1>'''
+                output += '''<div class="container text-center">'''
+                output += '''<table class="table table-hover">'''
+                output += '''<thead><tr> <th>Restaurant name</th><th>Modify Restaurant</th>
+                <th>Delete Restaurant</th></tr></thead><tbody>'''
                 for fr in firstResult:
+                    output += '''<tr><td>'''
                     output += fr.name
-                    output += "</br>"
+                    output += '''</td>'''
+                    output += '''<td>'''
+                    output += '''<a href="http://localhost:8080/restaurants/id/edit">Modify Restaurant</a>'''
+                    output += '''</td>'''
+                    output += '''<td>'''
+                    output += '''<a href="http://localhost:8080/restaurants/confirmdelete">Delete Restaurant</a>'''
+                    output += '''</td>'''
+                    output += '''</tr>'''
                     print fr.name
                     print "\n"
+                output += '''</tbody></table></div>'''
                 output += '''</div>''' 
                 #output += '''<form method='POST' enctype='multipart/form-data' action='/restaurant'><h2>What would you like me to say?</h2><input name="message" type="text" ><input type="submit" value="Submit"> </form>'''
                 output += "</body></html>"
