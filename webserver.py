@@ -81,12 +81,12 @@ class webServerHandler(BaseHTTPRequestHandler):
                 output += "</body></html>"
                 self.wfile.write(output)
                 #print output
-                return    
+                return
 
-                if self.path.endswith("/restaurants/new"):
+            if self.path.endswith("/restaurants/new"):
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
-                self.end_headers()
+                self.end_headers()        
                 output = ""
                 output += '''<!DOCTYPE html><html lang="en"><head>
                 <title>Bootstrap Example</title>
@@ -104,6 +104,7 @@ class webServerHandler(BaseHTTPRequestHandler):
                 <label for="New Restaurant Name">New Restaurant Name</label>
                 <input type="text" class="form-control" id="rname" name = 'newRestaurantName' placeholder = 'New Restaurant Name'>
                 </div>'''
+                output += "<input type='submit' value='Create'>"
                 output += "</form></body></html>"
                 self.wfile.write(output)
                 return
