@@ -43,20 +43,23 @@ class webServerHandler(BaseHTTPRequestHandler):
 
             if self.path.endswith("/restaurants"):
                 firstResult = session.query(Restaurant).all()
-                for fr in firstResult:
-                    print fr.name
-                    print "\n"
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
                 output = ""
                 output += "<html><body>"
                 output += "<h1>Restaurant Names</h1>"
-                output += '''<div class="container-fluid text-center"> %s  </div>''' 
+                output += '''<div class="container-fluid text-center">'''
+                for fr in firstResult:
+                    output += fr.name
+                    output += "</br>"
+                    print fr.name
+                    print "\n"
+                output += '''</div>''' 
                 #output += '''<form method='POST' enctype='multipart/form-data' action='/restaurant'><h2>What would you like me to say?</h2><input name="message" type="text" ><input type="submit" value="Submit"> </form>'''
                 output += "</body></html>"
                 self.wfile.write(output)
-                print output
+                #print output
                 return    
 
         except IOError:
