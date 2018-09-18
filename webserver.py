@@ -83,11 +83,48 @@ class webServerHandler(BaseHTTPRequestHandler):
                 #print output
                 return    
 
+                if self.path.endswith("/restaurants/new"):
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                output = ""
+                output += '''<!DOCTYPE html><html lang="en"><head>
+                <title>Bootstrap Example</title>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+                </head>'''
+                output += "<body>"
+                output += "<h1>Create New Restaurant</h1>"
+                output += '''<form method ='POST'  enctype='multipart/form-data' action = '/restaurants/new'>
+                <div class="form-group">
+                <label for="New Restaurant Name">New Restaurant Name</label>
+                <input type="text" class="form-control" id="rname" name = 'newRestaurantName' placeholder = 'New Restaurant Name'>
+                </div>'''
+                output += "</form></body></html>"
+                self.wfile.write(output)
+                return
+
         except IOError:
             self.send_error(404, 'File Not Found: %s' % self.path)
 
     def do_POST(self):
         try:
+            if self.path.endswith("/restaurants/new"):
+                ctype, pdict = cgi.parse_header(
+                    self.headers.getheader('content-type'))
+                if ctype == 'multipart/form-data':
+                    fields = cgi.parse_multipart(self.rfile, pdict)
+                    messagecontent = fields.get('newRestaurantName')
+
+                    # Create new Restaurant Object
+                    newRestaurant = Restaurant(name=messagecontent[0])
+                    session.add(newRestaurant)
+                    session.commit()
+
             self.send_response(301)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
