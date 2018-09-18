@@ -42,6 +42,10 @@ class webServerHandler(BaseHTTPRequestHandler):
                 return
 
             if self.path.endswith("/restaurants"):
+                firstResult = session.query(Restaurant).all()
+                for fr in firstResult:
+                    print fr.name
+                    print "\n"
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
