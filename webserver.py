@@ -57,6 +57,16 @@ class webServerHandler(BaseHTTPRequestHandler):
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
                 </head>'''
                 output += "<body>"
+                output += ''' <nav class="navbar navbar-inverse"><div class="container-fluid">
+                <div class="navbar-header"><a class="navbar-brand" href="http://localhost:8080/restaurants">
+                Restaurants and Menus</a></div>
+                <ul class="nav navbar-nav"><li class="active">
+                <a href="http://localhost:8080/restaurants">Home</a></li>
+                <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Restaurants 
+                <span class="caret"></span></a><ul class="dropdown-menu">
+                <li><a href="http://localhost:8080/restaurants/new">Create New</a></li>
+                </ul></li></ul></div></nav>'''
                 output += '''<h1 align="center">Restaurant Details</h1>'''
                 output += '''<div class="container text-center">'''
                 output += '''<table class="table table-hover">'''
@@ -67,7 +77,7 @@ class webServerHandler(BaseHTTPRequestHandler):
                     output += fr.name
                     output += '''</td>'''
                     output += '''<td>'''
-                    output += '''<a href="http://localhost:8080/restaurants/id/edit">Modify Restaurant</a>'''
+                    output += '''<a href="http://localhost:8080/restaurants/%s/edit">Modify Restaurant</a>''' % fr.id
                     output += '''</td>'''
                     output += '''<td>'''
                     output += '''<a href="http://localhost:8080/restaurants/confirmdelete">Delete Restaurant</a>'''
@@ -125,6 +135,7 @@ class webServerHandler(BaseHTTPRequestHandler):
                     newRestaurant = Restaurant(name=messagecontent[0])
                     session.add(newRestaurant)
                     session.commit()
+
 
             self.send_response(301)
             self.send_header('Content-type', 'text/html')
