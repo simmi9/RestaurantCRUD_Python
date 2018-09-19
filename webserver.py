@@ -80,7 +80,7 @@ class webServerHandler(BaseHTTPRequestHandler):
                     output += '''<a href="http://localhost:8080/restaurants/%s/edit">Modify Restaurant</a>''' % fr.id
                     output += '''</td>'''
                     output += '''<td>'''
-                    output += '''<a href="http://localhost:8080/restaurants/confirmdelete">Delete Restaurant</a>'''
+                    output += '''<a href="http://localhost:8080/restaurants/%s/delete">Delete Restaurant</a>''' % fr.id
                     output += '''</td>'''
                     output += '''</tr>'''
                     print fr.name
@@ -154,7 +154,7 @@ class webServerHandler(BaseHTTPRequestHandler):
                     self.wfile.write(output)
                     return
 
-                if self.path.endswith("/delete"):
+            if self.path.endswith("/delete"):
                 restaurantIDPath = self.path.split("/")[2] #finding id of restaurant name in /restaurants
                 myRestaurantQuery = session.query(Restaurant).filter_by(
                     id=restaurantIDPath).one()
@@ -213,7 +213,7 @@ class webServerHandler(BaseHTTPRequestHandler):
                         self.send_header('Content-type', 'text/html')
                         self.send_header('Location', '/restaurants')
                         self.end_headers()
-                        
+
             if self.path.endswith("/edit"):
                 ctype, pdict = cgi.parse_header(
                     self.headers.getheader('content-type'))
