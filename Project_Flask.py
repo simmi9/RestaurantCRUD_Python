@@ -13,7 +13,23 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 #@app.route('/')
-#def hello():
+@app.route('/')
+def DefaultRestaurantMenu():
+    restaurant = session.query(Restaurant).first()
+    items = session.query(MenuItem).filter_by(restaurant_id = restaurant.id)
+    output = ''
+    for i in items:
+        output += i.name
+        output += '</br>'
+        output += i.price
+        output += '</br>'
+        output += i.description
+        output += '</br>'
+        output += '</br>'
+        
+    return output
+
+    #def hello():
 @app.route('/restaurants/<int:restaurant_id>/')
 def restaurantMenu(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
@@ -56,9 +72,18 @@ def editMenuItem(restaurant_id, MenuID):
 
 
 # Task 3: Create a route for deleteMenuItem function here
-@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete/')
+@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete/', methods = ['GET', 'POST'])
 def deleteMenuItem(restaurant_id, menu_id):
-    return "page to delete a menu item. Task 3 complete!"    
+    deletedItem = session.query(MenuItem).filter_by(id = MenuID).one()
+    if request.method == 'POST':
+        if request.form['name']:
+            deletedItem.name = request.form['name']
+        session.delete(deletedItem)
+        session.commit()
+        return redirect(url_for('restaurantMenu', restaurant_id = restaurant_id))
+    else:
+        return render_template('deletemenuitem.html', restaurant_id = restaurant_id, MenuID = MenuID, item = deletedItem)
+    #return "page to delete a menu item. Task 3 complete!"    
 
 
 if __name__ == '__main__':
