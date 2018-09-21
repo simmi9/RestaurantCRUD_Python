@@ -1,11 +1,10 @@
-from flask import Flask
-app = Flask(__name__)
-from flask import Flask
-app = Flask(__name__)
-
+from flask import Flask, render_template, request, redirect, url_for, flash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Restaurant, MenuItem
+
+
+app = Flask(__name__)
 
 engine = create_engine('sqlite:///restaurantmenu.db')
 Base.metadata.bind = engine
@@ -13,38 +12,29 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 #@app.route('/')
-@app.route('/')
-def DefaultRestaurantMenu():
-    restaurant = session.query(Restaurant).first()
-    items = session.query(MenuItem).filter_by(restaurant_id = restaurant.id)
-    output = ''
-    for i in items:
-        output += i.name
-        output += '</br>'
-        output += i.price
-        output += '</br>'
-        output += i.description
-        output += '</br>'
-        output += '</br>'
+#def DefaultRestaurantMenu():
+#    restaurant = session.query(Restaurant).first()
+#    items = session.query(MenuItem).filter_by(restaurant_id = restaurant.id)
+#    output = ''
+#    for i in items:
+#        output += i.name
+#        output += '</br>'
+#        output += i.price
+#        output += '</br>'
+#        output += i.description
+#        output += '</br>'
+#        output += '</br>'
         
-    return output
+#    return output
 
     #def hello():
-@app.route('/restaurants/<int:restaurant_id>/')
+@app.route('/')
+@app.route('/restaurants/<int:restaurant_id>/menu')
 def restaurantMenu(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
-    items = session.query(MenuItem).filter_by(restaurant_id = restaurant.id)
-    output = ''
-    for i in items:
-        output += i.name
-        output += '</br>'
-        output += i.price
-        output += '</br>'
-        output += i.description
-        output += '</br>'
-        output += '</br>'
-    return output
-
+    items = session.query(MenuItem).filter_by(restaurant_id=restaurant_id)
+    return render_template(
+        'menu.html', restaurant=restaurant, items=items, restaurant_id=restaurant_id)
 #Task 1: Create route for newMenuItem function here
 @app.route('/restaurants/<int:restaurant_id>/new', methods=['GET','POST'])
 def newMenuItem(restaurant_id):
@@ -67,6 +57,7 @@ def editMenuItem(restaurant_id, MenuID):
             editedItem.name = request.form['name']
         session.add(editedItem)
         session.commit()
+        flash("menu item edited!")
         return redirect(url_for('restaurantMenu', restaurant_id = restaurant_id))
     else:
         return render_template('editmenuitem.html', restaurant_id = restaurant_id, MenuID = MenuID, item = editedItem)
@@ -81,6 +72,7 @@ def deleteMenuItem(restaurant_id, menu_id):
             deletedItem.name = request.form['name']
         session.delete(deletedItem)
         session.commit()
+        flash("new menu item deleted!")
         return redirect(url_for('restaurantMenu', restaurant_id = restaurant_id))
     else:
         return render_template('deletemenuitem.html', restaurant_id = restaurant_id, item = deletedItem)
@@ -88,6 +80,7 @@ def deleteMenuItem(restaurant_id, menu_id):
 
 
 if __name__ == '__main__':
+    app.secret_key = 'super_secret_key'
     app.debug = True
     app.run(host = '0.0.0.0', port = 5000)
 
