@@ -53,6 +53,7 @@ def newMenuItem(restaurant_id):
         newItem = MenuItem(name = request.form['name'], description = request.form['description'], price = request.form['price'], course = request.form['course'], restaurant_id = restaurant_id)
         session.add(newItem)
         session.commit()
+        flash("new menu item created!")
         return redirect(url_for('restaurantMenu', restaurant_id = restaurant_id))
     else:
         return render_template('newmenuitem.html', restaurant_id = restaurant_id)
@@ -82,7 +83,7 @@ def deleteMenuItem(restaurant_id, menu_id):
         session.commit()
         return redirect(url_for('restaurantMenu', restaurant_id = restaurant_id))
     else:
-        return render_template('deletemenuitem.html', restaurant_id = restaurant_id, MenuID = MenuID, item = deletedItem)
+        return render_template('deletemenuitem.html', restaurant_id = restaurant_id, item = deletedItem)
     #return "page to delete a menu item. Task 3 complete!"    
 
 
