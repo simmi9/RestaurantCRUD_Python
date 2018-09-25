@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash,jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Restaurant, MenuItem
@@ -11,23 +11,15 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
-#@app.route('/')
-#def DefaultRestaurantMenu():
-#    restaurant = session.query(Restaurant).first()
-#    items = session.query(MenuItem).filter_by(restaurant_id = restaurant.id)
-#    output = ''
-#    for i in items:
-#        output += i.name
-#        output += '</br>'
-#        output += i.price
-#        output += '</br>'
-#        output += i.description
-#        output += '</br>'
-#        output += '</br>'
-        
-#    return output
 
-    #def hello():
+#JSON API end point
+@app.route('/restaurants/<int:restaurant_id>/menu/JSON')
+def restaurantMenuJSON(restaurant_id):
+    restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
+    items = session.query(MenuItem).filter_by(
+        restaurant_id=restaurant_id).all()
+    return jsonify(MenuItems=[i.serialize for i in items])
+
 @app.route('/')
 @app.route('/restaurants/<int:restaurant_id>/menu')
 def restaurantMenu(restaurant_id):
@@ -66,7 +58,7 @@ def editMenuItem(restaurant_id, MenuID):
 # Task 3: Create a route for deleteMenuItem function here
 @app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete/', methods = ['GET', 'POST'])
 def deleteMenuItem(restaurant_id, menu_id):
-    deletedItem = session.query(MenuItem).filter_by(id = MenuID).one()
+    deletedItem = session.query(MenuItem).filter_by(id = menu_id).one()
     if request.method == 'POST':
         if request.form['name']:
             deletedItem.name = request.form['name']
